@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
-import { StyleSheet, View, FlatList,  Alert, TouchableWithoutFeedback, Keyboard} from 'react-native';
-import Header from './MyCardsProject/header';
-import Item from './MyCardsProject/item';
-import Input from './MyCardsProject/input';
+import { StyleSheet, View,Text,TextInput,Button,TouchableOpacity, FlatList,  Alert, TouchableWithoutFeedback, Keyboard} from 'react-native';
+
 
 
 export default function App() { 
@@ -16,6 +14,21 @@ export default function App() {
       key: Math.random().toString()
     }
   ]);
+
+  const[textFirst, setTextFirst] = useState('');
+  const[textSecond, setTextSecond] = useState('');
+  const[textAge, setTextAge] = useState('')
+
+  const handleFirstName = (text) => {
+    setTextFirst(text)
+  };
+  const handleSecondName = (text) => {
+    setTextSecond(text)
+  };
+  const handleAge = (text) => {
+    setTextAge(text)
+  };
+  
 
   const pressHandler = (key) => {
     Alert.alert(
@@ -56,14 +69,42 @@ export default function App() {
         Keyboard.dismiss();
       }}>
         <View style={styles.container}>
-          <Header></Header>
+        <View style={styles.header}>
+            <Text style={styles.title}> My Cards </Text>
+        </View>
           <View style={styles.content}>
-            <Input submitHandler={submitHandler}></Input>
+          <View>
+              <TextInput
+                style={styles.input} 
+                placeholder = 'e.g. Angey'
+                onChangeText={handleFirstName}
+              />
+              <TextInput
+                style={styles.input} 
+                placeholder = 'e.g. Ivanov'
+                onChangeText={handleSecondName}
+              />
+              <TextInput
+                style={styles.input} 
+                placeholder = 'e.g. 35'
+                keyboardType = 'numeric'
+                onChangeText={handleAge}
+              />
+              <Button 
+                color= 'orange'
+                onPress = {() => submitHandler()}
+                title = 'Add card'
+              />
+            </View>
             <View style={styles.list}>
               <FlatList 
               data={cards}
               renderItem={({item}) => (
-                <Item item={item} pressHandler={pressHandler}/>
+                <TouchableOpacity onPress={() => pressHandler(item.key)}>
+                  <Text style={styles.item}>
+                      {item.firstName } {item.secondName } {item.age}
+                  </Text>
+               </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
               />
@@ -92,5 +133,31 @@ const styles = StyleSheet.create({
      color: 'green',
      fontSize: 15,
      fontWeight: 'bold'
-   }
+   },
+   input: {
+    marginBottom: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: 'blue',
+  },
+  item: {
+    padding: 16,
+    marginTop: 16,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderRadius: 10
+  },
+  header: {
+    height: 80,
+    paddingTop: 38,
+    backgroundColor: 'orange'
+},
+title: {
+    textAlign: 'center',
+    color: 'black',
+    fontSize: 20,
+    fontWeight: 'bold'
+}
  });
