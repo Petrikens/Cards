@@ -1,114 +1,96 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState} from 'react';
+import { StyleSheet, View, FlatList,  Alert, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import Header from './MyCardsProject/header';
+import Item from './MyCardsProject/item';
+import Input from './MyCardsProject/input';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+export default function App() { 
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
+   
+  const[cards, setCards] = useState([
+    {
+      firstName: '',
+      secondName: '',
+      age:'',
+      key: Math.random().toString()
+    }
+  ]);
+
+  const pressHandler = (key) => {
+    Alert.alert(
+      "Message",
+      "Remove this card?",
+      [
+        {
+          text:"Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: () => {setCards((card) => {
+            return card.filter(nameItem => nameItem.key !== key)
+          })}
+        }
+      ],
+    );
+  };
+
+  const submitHandler = () => {
+    setCards((prevCards) => {
+      return [
+        {
+          firstName: textFirst,
+          secondName: textSecond,
+          age: textAge,
+          key: Math.random().toString()
+          },
+          ...prevCards
+      ];
+    });
+  };
+
+   return (
+      <TouchableWithoutFeedback onPress={() => {
+        Keyboard.dismiss();
+      }}>
+        <View style={styles.container}>
+          <Header></Header>
+          <View style={styles.content}>
+            <Input submitHandler={submitHandler}></Input>
+            <View style={styles.list}>
+              <FlatList 
+              data={cards}
+              renderItem={({item}) => (
+                <Item item={item} pressHandler={pressHandler}/>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              />
             </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
-
-export default App;
+   container: {
+     flex: 1,
+     backgroundColor: 'white',
+   },
+   content: {
+     padding: 40,
+     flex: 1
+   },
+   list: {
+     marginTop: 20,
+     flex: 1
+   },
+   text: {
+     textAlign: 'center',
+     color: 'green',
+     fontSize: 15,
+     fontWeight: 'bold'
+   }
+ });
